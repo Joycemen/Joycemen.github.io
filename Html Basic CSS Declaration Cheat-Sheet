@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset ="utf-8">
+  <link rel="stylesheet" href="css/index.css">
+    </head>
+
+
+    <body>
+ <p> Joyce's Css Declaration Cheat-Sheet</p>
+<table border="1">
+    <caption>Basic CSS Text Properties and Values Cheat-Sheet</caption>
+<thead>
+  <tbody>
+    <tr>
+        <th>Property</th>
+        <th>Value</th>
+        <th> Description</th>
+    </tr>
+</thead>
+
+<tr>
+    <td>Align-items</td>
+    <td>Right</td>
+    <td>Aligns content to the right of the web page or container</td>
+  </tr>
+
+<tr>
+    <td> Text-transform</td>
+    <td>Uppercase</td>
+    <td> Changes text to uppercase</td>
+</tr>
+
+<tr>
+    <td>Text-decoration</td>
+    <td>Paragraphs</td>
+    <td> Underlines paragraph text</td>
+    </tr>
+    <tr>
+        <td> Text-align</td>
+        <td>Center</td>
+        <td> Aligns content to the right</td>
+    </tr>
+    
+
+<tr>
+<td>Font-family</td>
+<td> Arial</td>
+<td>Sets the font family type to Arial</td>
+</tr>
+
+<tr>
+    <td>Font-size</td>
+    <td>16px</td>
+    <td>Sets the font size to 16 pixels</td>
+    </tr>
+
+     
+    <tr>
+        <td >Font-style</td>
+        <td>Italics</td>
+        <td>Sets the style of text to italics</td>
+      </tr>
+  
+      <tr>
+        <td>Font- weight</td>
+        <td>lighter</td>
+        <td>Sets the  font-weight to a lighter one</td>
+      </tr>
+
+
+    <tr>
+        <td>Color</td>
+        <td>Gold</td>
+        <td>Sets the font color to gold</td>
+        </tr>
+       
+            <tr>
+                <td>Background-color</td>
+                <td>Green</td>
+                <td>Defines the background color of an element as green</td>
+                </tr>
+               
+                  <tr>
+                      <td>Fall-back</td>
+                      <td>Georgia</td>
+                      <td>Uses Georgia font as the default font in the absence of the specified font</td>
+                    </tr>
+            
+                    <tr>
+                      <td>Letter-space</td>
+                      <td>1.5px</td>
+                      <td>Places a space of 1.5px between each letter/character in a word or sentence</td>
+                    </tr>
+                    <tr>
+                    <td>Word-spacing</td>
+                    <td>0.5em</td>
+                    <td>Defines a space of 0.5em between words in a block of text </td>
+                  </tr>
+                </tbody>
+</table>
+
+    </body>
+    <footer>
+    <aside class="footer"> 
+        <p>Css properties and values for styling html elements</p></aside> 
+    </footer>
+</html>
