@@ -1,0 +1,151 @@
+#Apple stock data analysis
+select * from apple;
+select AVG([Close]) AS Avg_Close from apple;
+
+select MAX([Close]) AS Max_Close, MIN([Close]) AS Min_Close from apple;
+
+----select AVG(Volume) AS Avg_Volume from apple;
+
+select AVG(Volume) AS Avg_Volume from apple;
+
+select Date, ([Close] - [Open]) AS Daily_Change from apple;
+
+select Date, (([Close] - [Open]) / [Open] * 100) AS Daily_Percentage_Change from apple;
+select
+    CONVERT(VARCHAR(7), [Date], 126) AS Month,
+    AVG([Close]) AS Avg_Monthly_Close
+from apple
+GROUP BY
+    CONVERT(VARCHAR(7), [Date], 126);
+	
+	SELECT 
+    CONVERT(VARCHAR(7), [Date], 126) AS Month,
+    SUM(Volume) AS Total_Monthly_Volume
+FROM apple
+GROUP BY CONVERT(VARCHAR(7), [Date], 126)
+ORDER BY CONVERT(VARCHAR(7), [Date], 126);
+
+--- Average yearly closing price
+SELECT YEAR(Date) AS Year, AVG([Close]) AS Avg_Yearly_Close
+FROM apple
+GROUP BY YEAR(Date);
+
+-- Standard deviation of the daily closing prices
+SELECT STDEV([Close]) AS StdDev_Value FROM apple;
+
+-- Average daily range (High - Low)
+SELECT AVG(High - Low) AS Avg_Daily_Range FROM apple;
+
+
+SELECT TOP 10 Date, Volume
+FROM apple
+ORDER BY Volume DESC;
+
+SELECT DATENAME(WEEKDAY, Date) AS Day, AVG(Volume) AS Avg_Volume
+FROM apple
+GROUP BY DATENAME(WEEKDAY, Date);
+
+WITH Price_Increase AS (
+    SELECT Date, [Close],
+           CASE WHEN LAG([Close]) OVER (ORDER BY Date) < [Close] THEN 1 ELSE 0 END AS Increase_Flag
+    FROM apple
+),
+Consecutive_Increase AS (
+    SELECT Date, [Close], Increase_Flag,
+           SUM(Increase_Flag) OVER (ORDER BY Date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS Consecutive_Increase
+    FROM Price_Increase
+)
+SELECT MAX(Consecutive_Increase) AS Longest_Increase_Streak FROM Consecutive_Increase;
+
+-- Longest consecutive days of price decrease
+WITH Price_Decrease AS (
+    SELECT Date, [Close],
+           CASE WHEN LAG([Close]) OVER (ORDER BY Date) > [Close] THEN 1 ELSE 0 END AS Decrease_Flag
+    FROM apple
+),
+Consecutive_Decrease AS (
+    SELECT Date, [Close], Decrease_Flag,
+           SUM(Decrease_Flag) OVER (ORDER BY Date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS Consecutive_Decrease
+    FROM Price_Decrease
+)
+SELECT MAX(Consecutive_Decrease) AS Longest_Decrease_Streak FROM Consecutive_Decrease;
+
+----------Correlation Between Daily Trading Volume and Closing Price
+-- Step 1: Calculate the means of Volume and Close
+WITH MeanValues AS (
+    SELECT 
+        AVG(CAST(Volume AS FLOAT)) AS Avg_Volume,
+        AVG(CAST([Close] AS FLOAT)) AS Avg_Close
+    FROM apple
+	),
+-- Step 2: Calculate the covariance of Volume and Close
+Covariance AS (
+    SELECT 
+        SUM((CAST(Volume AS FLOAT) - mv.Avg_Volume) * (CAST([Close] AS FLOAT) - mv.Avg_Close)) / (COUNT(*) - 1) AS Cov_Volume_Close
+    FROM apple, MeanValues mv
+),
+-- Step 3: Calculate the standard deviations of Volume and Close
+StandardDeviations AS (
+    SELECT 
+        SQRT(SUM(POWER(CAST(Volume AS FLOAT) - mv.Avg_Volume, 2)) / (COUNT(*) - 1)) AS StdDev_Volume,
+        SQRT(SUM(POWER(CAST([Close] AS FLOAT) - mv.Avg_Close, 2)) / (COUNT(*) - 1)) AS StdDev_Close
+    FROM apple, MeanValues mv
+)
+-- Step 4: Calculate the correlation coefficient
+SELECT 
+    cov.Cov_Volume_Close / (std.StdDev_Volume * std.StdDev_Close) AS Corr_Volume_Close
+FROM Covariance cov, StandardDeviations std;
+
+
+----2. Correlation Between Opening Price and Closing Price
+-- Step 1: Calculate the means of Open and Close
+WITH MeanValues AS (
+    SELECT 
+        AVG(CAST([Open] AS FLOAT)) AS Avg_Open,
+        AVG(CAST([Close] AS FLOAT)) AS Avg_Close
+    FROM apple
+),
+-- Step 2: Calculate the covariance of Open and Close
+Covariance AS (
+    SELECT 
+        SUM((CAST([Open] AS FLOAT) - mv.Avg_Open) * (CAST([Close] AS FLOAT) - mv.Avg_Close)) / (COUNT(*) - 1) AS Cov_Open_Close
+    FROM apple, MeanValues mv
+),
+-- Step 3: Calculate the standard deviations of Open and Close
+StandardDeviations AS (
+    SELECT 
+        SQRT(SUM(POWER(CAST([Open] AS FLOAT) - mv.Avg_Open, 2)) / (COUNT(*) - 1)) AS StdDev_Open,
+        SQRT(SUM(POWER(CAST([Close] AS FLOAT) - mv.Avg_Close, 2)) / (COUNT(*) - 1)) AS StdDev_Close
+    FROM apple, MeanValues mv
+)
+-- Step 4: Calculate the correlation coefficient
+SELECT 
+    cov.Cov_Open_Close / (std.StdDev_Open * std.StdDev_Close) AS Corr_Open_Close
+FROM Covariance cov, StandardDeviations std;
+
+
+---- Step 1: Calculate the means of Open and Close
+WITH MeanValues AS (
+    SELECT 
+        AVG(CAST([Open] AS FLOAT)) AS Avg_Open,
+        AVG(CAST([Close] AS FLOAT)) AS Avg_Close
+    FROM apple
+),
+-- Step 2: Calculate the covariance of Open and Close
+Covariance AS (
+    SELECT 
+        SUM((CAST([Open] AS FLOAT) - mv.Avg_Open) * (CAST([Close] AS FLOAT) - mv.Avg_Close)) / (COUNT(*) - 1) AS Cov_Open_Close
+    FROM apple, MeanValues mv
+),
+-- Step 3: Calculate the standard deviations of Open and Close
+StandardDeviations AS (
+    SELECT 
+        SQRT(SUM(POWER(CAST([Open] AS FLOAT) - mv.Avg_Open, 2)) / (COUNT(*) - 1)) AS StdDev_Open,
+        SQRT(SUM(POWER(CAST([Close] AS FLOAT) - mv.Avg_Close, 2)) / (COUNT(*) - 1)) AS StdDev_Close
+    FROM apple, MeanValues mv
+)
+-- Step 4: Calculate the correlation coefficient
+SELECT 
+    Cov_Open_Close / (StdDev_Open * StdDev_Close) AS Corr_Open_Close
+FROM Covariance, StandardDeviations;
+
